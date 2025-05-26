@@ -1,7 +1,6 @@
 @extends('layouts.dashboard')
 
 @section('title', __('messages.Edit Category'))
-
 @section('link', __('messages.Edit Category'))
 
 @section('content')
@@ -17,13 +16,24 @@
                 @csrf
                 @method('PUT')
                 <div class="card-body">
-                    {{-- حقل الاسم --}}
+                    {{-- الاسم بالعربية --}}
                     <div class="form-group">
-                        <label for="name">
-                            <i class="fas fa-tag"></i> {{ __('messages.Category name') }}
+                        <label for="name_ar">
+                            <i class="fas fa-tag"></i> {{ __('messages.Name in Arabic') }}
                         </label>
-                        <input type="text" name="name" id="name" class="form-control" value="{{ old('name', $category->name) }}" required>
-                        @error('name')
+                        <input type="text" name="name_ar" id="name_ar" class="form-control" value="{{ old('name_ar', $category->name_ar) }}" required>
+                        @error('name_ar')
+                            <small class="text-danger d-block mt-1">{{ $message }}</small>
+                        @enderror
+                    </div>
+
+                    {{-- الاسم بالإنجليزية --}}
+                    <div class="form-group">
+                        <label for="name_en">
+                            <i class="fas fa-tag"></i> {{ __('messages.Name in English') }}
+                        </label>
+                        <input type="text" name="name_en" id="name_en" class="form-control" value="{{ old('name_en', $category->name_en) }}" required>
+                        @error('name_en')
                             <small class="text-danger d-block mt-1">{{ $message }}</small>
                         @enderror
                     </div>

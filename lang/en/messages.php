@@ -385,5 +385,12 @@ return [
     'cancel_reply' => 'Cancel Reply',
     'login_to_comment' => 'Please log in to add a comment.',
     'no_comments' => 'No comments yet.',
+    'Category name (Arabic)' => 'Category name (Arabic)',
+    'Category name (English)' => 'Category name (English)',
+    'Example placeholder in Arabic' => 'e.g. ورد طبيعي',
+    'Example placeholder in English' => 'e.g. Natural Flowers',
+    'Category created successfully' => 'Category created successfully',
+    'Name in Arabic' => 'Name in Arabic',
+    'Name in English' => 'Name in English',
 
 ];

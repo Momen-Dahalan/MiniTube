@@ -1,7 +1,6 @@
 @extends('layouts.dashboard')
 
 @section('title', __('messages.Create Category'))
-
 @section('link', __('messages.Create Category'))
 
 @section('content')
@@ -16,13 +15,24 @@
             <form action="{{ route('admin.categories.store') }}" method="POST">
                 @csrf
                 <div class="card-body">
-                    {{-- حقل الاسم --}}
+                    {{-- حقل الاسم بالعربية --}}
                     <div class="form-group">
-                        <label for="name">
-                            <i class="fas fa-tag"></i> {{ __('messages.Category name') }}
+                        <label for="name_ar">
+                            <i class="fas fa-tag"></i> {{ __('messages.Category name (Arabic)') }}
                         </label>
-                        <input type="text" name="name" id="name" class="form-control" placeholder="{{ __('messages.Example placeholder') }}" value="{{ old('name') }}" required>
-                        @error('name')
+                        <input type="text" name="name_ar" id="name_ar" class="form-control" placeholder="{{ __('messages.Example placeholder in Arabic') }}" value="{{ old('name_ar') }}" required>
+                        @error('name_ar')
+                            <small class="text-danger d-block mt-1">{{ $message }}</small>
+                        @enderror
+                    </div>
+
+                    {{-- حقل الاسم بالإنجليزية --}}
+                    <div class="form-group">
+                        <label for="name_en">
+                            <i class="fas fa-tag"></i> {{ __('messages.Category name (English)') }}
+                        </label>
+                        <input type="text" name="name_en" id="name_en" class="form-control" placeholder="{{ __('messages.Example placeholder in English') }}" value="{{ old('name_en') }}" required>
+                        @error('name_en')
                             <small class="text-danger d-block mt-1">{{ $message }}</small>
                         @enderror
                     </div>

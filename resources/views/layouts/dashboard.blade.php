@@ -130,7 +130,7 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('videos.index') }}" class="nav-link">
+                            <a href="{{ route('admin.videos.index') }}" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>{{ __('messages.show_videos') }}</p>
                             </a>
@@ -151,13 +151,13 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('categories.index') }}" class="nav-link">
+                            <a href="{{ route('admin.categories.index') }}" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>{{ __('messages.show_categories') }}</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('categories.create') }}" class="nav-link">
+                            <a href="{{ route('admin.categories.create') }}" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>{{ __('messages.create_category') }}</p>
                             </a>
@@ -180,7 +180,7 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('channels.index') }}" class="nav-link">
+                            <a href="{{ route('admin.channels.index') }}" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>{{ __('messages.show_channels') }}</p>
                             </a>
@@ -230,7 +230,7 @@
                 </li>
 
 
-                @can('view users')
+                @can('view-users')
                 <hr style="border-top: 1px solid #707070; margin: 0.5rem 0;" />
 
                 <li class="nav-item">

@@ -28,16 +28,3 @@ cp .env.example .env
 php artisan key:generate
 php artisan migrate --seed
 php artisan serve
-
-
----
-
-
-📜 الترخيص
-المشروع مفتوح المصدر ومتاح تحت ترخيص MIT.
-
-👨‍💻 المطور
-الاسم: مؤمن عمر دحلان
-الدولة: غزة، فلسطين
-التخصص: مبرمج Back-end بلغة PHP وLaravel
-البريد: momenomardahalan@gmail.com

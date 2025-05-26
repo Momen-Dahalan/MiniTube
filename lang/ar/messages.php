@@ -389,8 +389,16 @@ return [
     'cancel_reply' => 'إلغاء الرد',
     'login_to_comment' => 'يرجى تسجيل الدخول لإضافة تعليق.',
     'no_comments' => 'لا توجد تعليقات بعد.',
+    'Category name (Arabic)' => 'اسم التصنيف (عربي)',
+    'Category name (English)' => 'اسم التصنيف (إنجليزي)',
+    'Example placeholder in Arabic' => 'مثلاً: ورد طبيعي',
+    'Example placeholder in English' => 'e.g. Natural Flowers',
+    'Category created successfully' => 'تم إنشاء التصنيف بنجاح',
+    'Name in Arabic' => 'الاسم بالعربية',
+    'Name in English' => 'الاسم بالإنجليزية',
 
-    
+
+
 
 
 

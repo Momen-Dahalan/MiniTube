@@ -28,18 +28,24 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
+public function store(Request $request)
+{
+    // التحقق من صحة البيانات
+    $request->validate([
+        'name_ar' => 'required|string|max:255',
+        'name_en' => 'required|string|max:255',
+    ]);
 
-        Category::create([
-            'name' => $request->name,
-        ]);
+    // إنشاء التصنيف
+    Category::create([
+        'name_ar' => $request->name_ar,
+        'name_en' => $request->name_en,
+    ]);
 
-        return redirect()->route('admin.categories.index')->with('success', 'تم إنشاء التصنيف بنجاح');
-    }
+    // إعادة التوجيه مع رسالة نجاح
+    return redirect()->route('admin.categories.index')
+        ->with('success', __('messages.Category created successfully'));
+}
 
     /**
      * Display the specified resource.
@@ -61,19 +67,23 @@ class CategoryController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, Category $category)
-    {
+{
+    // التحقق من البيانات
     $request->validate([
-        'name' => 'required|string|max:255',
+        'name_ar' => 'required|string|max:255',
+        'name_en' => 'required|string|max:255',
     ]);
 
-    // تحديث البيانات
+    // التحديث
     $category->update([
-        'name' => $request->name,
+        'name_ar' => $request->name_ar,
+        'name_en' => $request->name_en,
     ]);
 
     // إعادة التوجيه مع رسالة نجاح
-    return redirect()->route('admin.categories.index')->with('success', 'تم تحديث التصنيف بنجاح.');
-    }
+    return redirect()->route('admin.categories.index')
+        ->with('success', 'تم تحديث التصنيف بنجاح.');
+}
 
     /**
      * Remove the specified resource from storage.
