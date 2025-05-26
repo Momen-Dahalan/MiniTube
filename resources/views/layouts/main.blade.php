@@ -18,84 +18,42 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet" />
 
-    <style>
-        .navbar-custom {
-            background: linear-gradient(90deg, #4f46e5 0%, #3b82f6 100%);
-        }
 
-        .navbar-custom .navbar-brand,
-        .navbar-custom .nav-link {
-            color: white;
-            font-weight: 600;
-            transition: color 0.3s ease;
-        }
-
-        .navbar-custom .nav-link:hover {
-            color: #facc15;
-        }
-
-        .avatar {
-            width: 36px;
-            height: 36px;
-            object-fit: cover;
-            border-radius: 50%;
-            border: 2px solid #facc15;
-            transition: transform 0.3s ease;
-        }
-
-        .avatar:hover {
-            transform: scale(1.1);
-        }
-
-        .hover-shadow:hover {
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-            background-color: #e9ecef;
-        }
-
-        .alert-body {
-            word-wrap: break-word;
-            white-space: normal;
-            max-width: 300px;
-        }
-
-        .alert-body .dropdown-item {
-            white-space: normal;
-            word-break: break-word;
-        }
-    </style>
     @yield('style')
     @livewireStyles
 </head>
 
 <body class="bg-light">
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-custom sticky-top shadow-sm">
-        <div class="container">
-            <a class="navbar-brand fs-3" href="{{ route('home.index') }}">MiniTube</a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fs-3 fw-bold" href="{{ route('home.index') }}">MiniTube</a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="collapse navbar-collapse d-flex flex-column flex-lg-row @if (app()->getLocale() == 'ar') flex-row-reverse @else flex-row @endif"
-                id="navbarContent">
+            <div class="collapse navbar-collapse mt-2 mt-lg-0" id="navbarContent">
+                {{-- الروابط العلوية: إنشاء قناة، التصنيفات --}}
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    @auth
+                        @if (auth()->user()->channel)
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('channels.index') }}">
+                                    <i class="fas fa-tv me-1"></i> {{ __('messages.my_channel') }}
+                                </a>
+                            </li>
+                        @else
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('channels.create') }}">
+                                    <i class="fas fa-plus-circle me-1"></i> {{ __('messages.create_channel') }}
+                                </a>
+                            </li>
+                        @endif
+                    @endauth
 
-                <!-- Left links -->
-                <ul class="navbar-nav @if (app()->getLocale() == 'ar') ms-auto @else me-auto @endif mb-2 mb-lg-0">
-                    @if (auth()->user() && auth()->user()->channel)
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('channels.index') }}">
-                                <i class="fas fa-tv me-1"></i> {{ __('messages.my_channel') }}
-                            </a>
-                        </li>
-                    @elseif(auth()->check())
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('channels.create') }}">
-                                <i class="fas fa-plus-circle me-1"></i> {{ __('messages.create_channel') }}
-                            </a>
-                        </li>
-                    @endif
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('categories.index') }}">
                             <i class="fas fa-list-alt me-1"></i> {{ __('messages.categories') }}
@@ -103,132 +61,51 @@
                     </li>
                 </ul>
 
-                <!-- Right links -->
-                {{-- <ul class="navbar-nav @if (app()->getLocale() == 'ar') me-auto @else ms-auto @endif align-items-center">
+                {{-- الأدوات الجانبية: إشعارات، صورة، لغة --}}
                 @auth
-                    <!-- Nav Item - Alerts -->
-                    <li class="nav-item dropdown alert-dropdown">
-                        <a class="nav-link position-relative" href="#" id="alertsDropdown" role="button"
-                            data-bs-toggle="dropdown">
-                            <i class="fas fa-bell fa-fw fs-5"></i>
-                            <span
-                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notif-count"
-                                data-count="0">
-                                0
-                            </span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end shadow animated--grow-in p-0"
-                            aria-labelledby="alertsDropdown" style="width: 320px;">
-                            <div
-                                class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom bg-light">
-                                <span class="fw-bold">{{ __('messages.notifications') }}</span>
-                                <button id="markAllRead" class="btn btn-sm btn-outline-primary">{{ __('messages.mark_all_read') }}</button>
-                            </div>
-                            <div class="alert-body p-2" style="max-width: 300px; white-space: normal;">
-                                <span class="dropdown-item text-muted no-notifications">لا توجد إشعارات جديدة</span>
-                            </div>
-                        </div>
-                    </li>
+                    <div class="d-flex flex-column flex-lg-row align-items-start align-items-lg-center gap-3 ms-lg-3">
 
-                    <li class="nav-item dropdown ms-3">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=4f46e5&color=fff&size=64"
-                                alt="User Avatar" class="avatar shadow-sm me-2 rounded-circle" title="{{ Auth::user()->name }}" />
-                            <span class="text-white fw-semibold">{{ Auth::user()->name }}</span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow animated--grow-in" aria-labelledby="userDropdown">
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-user me-2 text-primary"></i> {{ __('messages.profile') }}
-                                </a>
-                            </li>
-                            @can('view-dashboard')
-                            <li>
-                                <a class="dropdown-item" href="{{ url('/admin/dashboard') }}">
-                                    <i class="fas fa-cogs me-2 text-success"></i> {{ __('messages.dashboard') }}
-                                </a>
-                            </li>  
-                            @endcan
-
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit" class="dropdown-item text-danger">
-                                        <i class="fas fa-sign-out-alt me-2"></i> {{ __('messages.logout') }}
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
-                    </li>
-
-
-                    <form action="#" method="POST" class="ms-3">
-                        @csrf
-                        <select name="language" class="form-select form-select-sm" onchange="this.form.submit()">
-                            <option value="ar" {{ app()->getLocale() == 'ar' ? 'selected' : '' }}>العربية</option>
-                            <option value="en" {{ app()->getLocale() == 'en' ? 'selected' : '' }}>English</option>
-                        </select>
-                    </form>
-
-                @else
-                    <li class="nav-item">
-                        <a href="{{ route('login') }}" class="btn btn-outline-light me-2">{{ __('messages.login') }}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('register') }}" class="btn btn-warning text-dark fw-bold">{{ __('messages.register') }}</a>
-                    </li>
-                @endauth
-            </ul> --}}
-
-                <ul
-                    class="navbar-nav @if (app()->getLocale() == 'ar') me-auto @else ms-auto @endif align-items-center">
-                    @auth
-                        <!-- الإشعارات -->
-                        <li class="nav-item dropdown alert-dropdown">
-                            <a class="nav-link position-relative" href="#" id="alertsDropdown" role="button"
-                                data-bs-toggle="dropdown">
-                                <i class="fas fa-bell fa-fw fs-5"></i>
-                                <span
-                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notif-count"
-                                    data-count="0">0</span>
+                        {{-- زر الإشعارات --}}
+                        <div class="nav-item dropdown position-relative">
+                            <a class="nav-link text-white" href="#" id="alertsDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <div class="position-relative">
+                                    <i class="fas fa-bell fa-lg"></i>
+                                    <span
+                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notif-count"
+                                        data-count="0">0</span>
+                                </div>
                             </a>
-                            <div class="dropdown-menu dropdown-menu-end shadow animated--grow-in p-0"
+                            <div class="dropdown-menu mt-2 shadow {{ app()->getLocale() == 'ar' ? 'dropdown-menu-end' : 'dropdown-menu-start' }}"
                                 aria-labelledby="alertsDropdown" style="width: 320px;">
                                 <div
-                                    class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom bg-light">
+                                    class="px-3 py-2 border-bottom bg-light d-flex justify-content-between align-items-center">
                                     <span class="fw-bold">{{ __('messages.notifications') }}</span>
-                                    <button id="markAllRead"
-                                        class="btn btn-sm btn-outline-primary">{{ __('messages.mark_all_read') }}</button>
+                                    <button id="markAllRead" class="btn btn-sm btn-outline-primary">
+                                        {{ __('messages.mark_all_read') }}
+                                    </button>
                                 </div>
-                                <div class="alert-body p-2" style="max-width: 300px; white-space: normal;">
+                                <div class="alert-body p-2">
                                     <span class="dropdown-item text-muted no-notifications">لا توجد إشعارات جديدة</span>
                                 </div>
                             </div>
-                        </li>
+                        </div>
 
-                        <!-- المستخدم -->
-                        <li class="nav-item dropdown ms-3">
-                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown"
-                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{-- صورة المستخدم + القائمة --}}
+                        <div class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center text-white" href="#"
+                                id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=4f46e5&color=fff&size=64"
-                                    alt="User Avatar" class="avatar shadow-sm me-2 rounded-circle"
-                                    title="{{ Auth::user()->name }}" />
-                                <span class="text-white fw-semibold">{{ Auth::user()->name }}</span>
+                                    alt="User Avatar" class="rounded-circle shadow me-2" width="35" height="35">
+                                <span class="fw-semibold">{{ Auth::user()->name }}</span>
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end shadow animated--grow-in"
+                            <ul class="dropdown-menu shadow {{ app()->getLocale() == 'ar' ? 'dropdown-menu-end' : 'dropdown-menu-start' }}"
                                 aria-labelledby="userDropdown">
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="fas fa-user me-2 text-primary"></i> {{ __('messages.profile') }}
-                                    </a>
-                                </li>
+                                <li><a class="dropdown-item" href="#"><i
+                                            class="fas fa-user me-2 text-primary"></i>{{ __('messages.profile') }}</a></li>
                                 @can('view-dashboard')
-                                    <li>
-                                        <a class="dropdown-item" href="{{ url('/admin/dashboard') }}">
-                                            <i class="fas fa-cogs me-2 text-success"></i> {{ __('messages.dashboard') }}
-                                        </a>
+                                    <li><a class="dropdown-item" href="{{ url('/admin/dashboard') }}"><i
+                                                class="fas fa-cogs me-2 text-success"></i>{{ __('messages.dashboard') }}</a>
                                     </li>
                                 @endcan
                                 <li>
@@ -238,44 +115,41 @@
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
                                         <button type="submit" class="dropdown-item text-danger">
-                                            <i class="fas fa-sign-out-alt me-2"></i> {{ __('messages.logout') }}
+                                            <i class="fas fa-sign-out-alt me-2"></i>{{ __('messages.logout') }}
                                         </button>
                                     </form>
                                 </li>
                             </ul>
-                        </li>
+                        </div>
 
-                        <!-- اختيار اللغة -->
-                        <li class="nav-item ms-3">
-                            <form action="{{route('lang.chang')}}" method="POST">
-                                @csrf
-                                <div class="input-group input-group-sm">
-                                    <span class="input-group-text bg-white"><i class="fas fa-globe"></i></span>
-                                    <select name="language" class="form-select border-0" onchange="this.form.submit()"
-                                        style="min-width: 100px;">
-                                        <option value="ar" {{ app()->getLocale() == 'ar' ? 'selected' : '' }}>العربية
-                                        </option>
-                                        <option value="en" {{ app()->getLocale() == 'en' ? 'selected' : '' }}>English
-                                        </option>
-                                    </select>
-                                </div>
-                            </form>
-                        </li>
-                    @else
-                        <li class="nav-item">
-                            <a href="{{ route('login') }}"
-                                class="btn btn-outline-light me-2">{{ __('messages.login') }}</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('register') }}"
-                                class="btn btn-warning text-dark fw-bold">{{ __('messages.register') }}</a>
-                        </li>
-                    @endauth
-                </ul>
+                        {{-- اللغة --}}
+                        <form action="{{ route('lang.chang') }}" method="POST" class="d-flex align-items-center">
+                            @csrf
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-white"><i class="fas fa-globe"></i></span>
+                                <select name="language" class="form-select border-0" onchange="this.form.submit()"
+                                    style="min-width: 100px;">
+                                    <option value="ar" {{ app()->getLocale() == 'ar' ? 'selected' : '' }}>العربية
+                                    </option>
+                                    <option value="en" {{ app()->getLocale() == 'en' ? 'selected' : '' }}>English
+                                    </option>
+                                </select>
+                            </div>
+                        </form>
 
+                    </div>
+                @else
+                    {{-- للضيوف: تسجيل دخول وتسجيل جديد --}}
+                    <div class="d-flex gap-2 mt-2 mt-lg-0">
+                        <a href="{{ route('login') }}" class="btn btn-outline-light">{{ __('messages.login') }}</a>
+                        <a href="{{ route('register') }}"
+                            class="btn btn-warning text-dark fw-bold">{{ __('messages.register') }}</a>
+                    </div>
+                @endauth
             </div>
         </div>
     </nav>
+
 
 
     <!-- Flash Messages -->
