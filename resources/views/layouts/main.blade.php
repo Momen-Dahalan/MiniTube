@@ -457,6 +457,8 @@
         });
     </script>
 
+    @yield('scripts')
+
 
 </body>
 

@@ -19,7 +19,7 @@
                     <div class="card h-100 shadow-sm rounded-4 border-0 hover-card overflow-hidden">
                         {{-- صورة الفيديو --}}
                         <a href="{{ route('videos.show', $video) }}">
-                            <img src="{{ asset('storage/' . $video->thumbnail) }}" 
+                            <img src="{{ asset('storage/thumnail/' . $video->thumbnail) }}" 
                                  alt="{{ $video->title }}" 
                                  class="card-img-top video-thumbnail"
                                  style="height: 200px; object-fit: cover;">

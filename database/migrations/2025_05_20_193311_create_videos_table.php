@@ -12,17 +12,30 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('videos', function (Blueprint $table) {
+            // $table->id();
+
+
+            // $table->string('thumbnail')->nullable(); // صورة مصغّرة
+            // $table->integer('views')->default(0);
+            // $table->boolean('is_processed')->default(false); // هل تم ضغط الفيديو؟
+            
+            // $table->timestamps();
+
             $table->id();
             $table->foreignId('channel_id')->constrained()->onDelete('cascade'); // قناة الفيديو
             $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('set null');
             $table->string('title');
             $table->text('description')->nullable();
-            $table->string('video_path'); // مسار الفيديو في storage أو S3
-            $table->json('video_paths')->nullable();
-            $table->string('thumbnail')->nullable(); // صورة مصغّرة
-            $table->integer('views')->default(0);
+            $table->string('video_path');
+            $table->string('thumbnail');
+            $table->string('hours')->nullable();
+            $table->string('minutes')->nullable();
+            $table->string('seconds')->nullable();
+            $table->string('quality')->nullable();
+            $table->boolean('processed')->default(false);
+            $table->boolean('Longitudinal')->default(false);
+            $table->integer('views')->default(0); // عدد المشاهدات
             $table->boolean('is_processed')->default(false); // هل تم ضغط الفيديو؟
-            
             $table->timestamps();
         });
     }

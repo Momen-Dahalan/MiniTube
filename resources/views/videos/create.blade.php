@@ -53,6 +53,23 @@
                 @enderror
             </div>
 
+            {{-- رفع صورة الثمنل (Thumbnail) مع معاينة --}}
+            <div class="mb-4">
+                <label for="thumbnail" class="form-label fw-semibold">
+                    {{ __('messages.video_thumbnail') }}
+                </label>
+                <input type="file" name="thumbnail" id="thumbnail" 
+                       accept="image/*"
+                       class="form-control @error('thumbnail') is-invalid @enderror" />
+                @error('thumbnail')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+                <div class="mt-3" style="width: 150px; height: 150px; border: 1px solid #ddd; border-radius: 5px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                    <img id="thumbnail-preview" src="#" alt="Thumbnail Preview" 
+                         style="width: 100%; height: 100%; display: none; object-fit: cover;" />
+                </div>
+            </div>
+
             {{-- رفع الفيديو --}}
             <div class="mb-4">
                 <label for="video_path" class="form-label fw-semibold">
@@ -75,4 +92,20 @@
         </form>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    document.getElementById('thumbnail').addEventListener('change', function(event) {
+        const [file] = this.files;
+        const preview = document.getElementById('thumbnail-preview');
+        if (file) {
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = 'block';
+        } else {
+            preview.src = '';
+            preview.style.display = 'none';
+        }
+    });
+</script>
 @endsection

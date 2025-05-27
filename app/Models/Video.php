@@ -9,7 +9,6 @@ use Laravel\Scout\Searchable;
 class Video extends Model
 {
     use HasFactory;
-    use Searchable;
 
     protected $fillable = [
         'channel_id',
