@@ -41,7 +41,7 @@
                             <div class="col-md-4">
                                 <div class="card h-100 border-0 shadow-sm hover-shadow transition">
                                     <a href="{{ route('videos.show', $video) }}">
-                                        <img src="{{ asset('storage/'.$video->thumbnail) }}"
+                                        <img src="{{ asset('storage/thumnail/'.$video->thumbnail) }}"
                                              class="card-img-top"
                                              alt="Thumbnail for {{ $video->title }}"
                                              style="height: 200px; object-fit: cover;">

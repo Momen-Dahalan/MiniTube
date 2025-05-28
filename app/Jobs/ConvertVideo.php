@@ -2,22 +2,27 @@
 
 namespace App\Jobs;
 
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+
+use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 use App\Models\ConvertedVideo;
 use App\Models\Video;
 use FFMpeg\Coordinate\Dimension;
-use FFMpeg\FFProbe as FFMpegFFProbe;
 use FFMpeg\Filters\Video\VideoFilters;
 use FFMpeg\Format\Video\WebM;
 use FFMpeg\Format\Video\X264;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Storage;
-use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
+use FFMpeg\FFProbe;
 
 
 class ConvertVideo implements ShouldQueue
 {
-    use Queueable;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
      * Create a new job instance.
@@ -147,12 +152,12 @@ class ConvertVideo implements ShouldQueue
 
     public function handle(): void
     {
-        $ffprobe = FFMpegFFProbe::create();
+        $ffprobe = FFProbe::create();
         $video1 = $ffprobe->streams(public_path('/storage//' .$this->video->video_path))->videos()->first();
         $width = $video1->get('width');
         $height = $video1->get('height');
 
-        $media= FFMpeg::fromDisk($this->video->disk)
+        $media= FFMpeg::fromDisk('public')
         ->open($this->video->video_path);
         
         $durationInSeconds = $media->getDurationInSeconds();

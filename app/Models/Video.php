@@ -4,23 +4,29 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Scout\Searchable;
 
 class Video extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'channel_id',
-        'category_id',
-        'title',
-        'description',
-        'video_path',
-        'video_paths',
-        'thumbnail',
-        'views',
-        'is_processed',
-    ];
+protected $fillable = [
+    'channel_id',
+    'category_id',
+    'title',
+    'description',
+    'video_path',
+    'thumbnail',
+    'hours',
+    'minutes',
+    'seconds',
+    'quality',
+    'processed',
+    'Longitudinal',
+    'views',
+    'is_processed',
+];
 
     public function toSearchableArray()
     {
@@ -31,6 +37,7 @@ class Video extends Model
             'category' => $this->category->name ?? '',
         ];
     }
+
 
 
 
@@ -79,4 +86,10 @@ class Video extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function convertedVideos()
+    {
+        return $this->hasMany(ConvertedVideo::class);
+    }
+
+    
 }

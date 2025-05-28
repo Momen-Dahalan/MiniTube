@@ -52,7 +52,7 @@
                 @forelse($videos as $video)
                 <div class="col">
                     <a href="{{ route('videos.show', $video) }}" class="card h-100 text-decoration-none text-dark shadow-sm border-0 rounded-4 overflow-hidden hover-card">
-                        <img src="{{ asset('storage/' . $video->thumbnail) }}" 
+                        <img src="{{ asset('storage/thumnail/' . $video->thumbnail) }}" 
                              alt="{{ __('messages.video_image') }}" 
                              class="card-img-top"
                              style="height: 200px; object-fit: cover;">

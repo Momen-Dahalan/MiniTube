@@ -19,6 +19,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet" />
 
 
+    <style>
+    .dropdown-menu {
+        max-width: 320px; /* ثبّت العرض */
+        /* لا تحدد ارتفاع أو تمرير عمودي */
+    }
+
+    .alert-body {
+        /* لا تحدد ارتفاع أو تمرير عمودي */
+        padding-right: 10px;
+    }
+
+    .dropdown-item {
+        white-space: normal !important; /* السماح بلف النص لسطور متعددة */
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    </style>
     @yield('style')
     @livewireStyles
 </head>
@@ -66,7 +83,7 @@
                     <div class="d-flex flex-column flex-lg-row align-items-start align-items-lg-center gap-3 ms-lg-3">
 
                         {{-- زر الإشعارات --}}
-                        <div class="nav-item dropdown position-relative">
+                        <div class="nav-item dropdown position-relative alert-dropdown">
                             <a class="nav-link text-white" href="#" id="alertsDropdown" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
                                 <div class="position-relative">
@@ -224,8 +241,6 @@
                 });
         @endif
     </script>
-
-
 
 
 

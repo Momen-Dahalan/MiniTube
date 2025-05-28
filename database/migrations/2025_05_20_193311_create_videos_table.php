@@ -12,14 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('videos', function (Blueprint $table) {
-            // $table->id();
-
-
-            // $table->string('thumbnail')->nullable(); // صورة مصغّرة
-            // $table->integer('views')->default(0);
-            // $table->boolean('is_processed')->default(false); // هل تم ضغط الفيديو؟
-            
-            // $table->timestamps();
 
             $table->id();
             $table->foreignId('channel_id')->constrained()->onDelete('cascade'); // قناة الفيديو
@@ -35,7 +27,6 @@ return new class extends Migration
             $table->boolean('processed')->default(false);
             $table->boolean('Longitudinal')->default(false);
             $table->integer('views')->default(0); // عدد المشاهدات
-            $table->boolean('is_processed')->default(false); // هل تم ضغط الفيديو؟
             $table->timestamps();
         });
     }

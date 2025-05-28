@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use FFMpeg;
 use Illuminate\Support\Str;
+
 class VideoController extends Controller
 {
     use AuthorizesRequests;
@@ -25,7 +26,7 @@ class VideoController extends Controller
      */
     public function index()
     {
-        
+
         $videos = Video::latest()->paginate(6); // عدّل العدد حسب الحاجة
         return view('videos.index', compact('videos'));
     }
@@ -35,34 +36,32 @@ class VideoController extends Controller
      */
     public function create()
     {
-        
+
         $channel = auth()->user()->channel; // الحصول على القنوات الخاصة بالمستخدم
         $this->authorize('create', $channel);
         $categories = Category::all(); // الحصول على جميع الفئات
-        return view('videos.create' , compact(['channel' , 'categories'])); // تمرير القنوات والفئات إلى العرض
+        return view('videos.create', compact(['channel', 'categories'])); // تمرير القنوات والفئات إلى العرض
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
 
     public function store(Request $request)
     {
         $request->validate([
-        'title' => 'required',
-        'description' => 'nullable|string',
-        'thumbnail' => 'image|required',
-        'video_path' => 'required',
+            'title' => 'required',
+            'description' => 'nullable|string',
+            'thumbnail' => 'image|required',
+            'video_path' => 'required',
         ]);
 
 
         $randomPath = Str::random(16); // إنشاء مسار عشوائي
-        $videoPath = $randomPath.'.'.$request->video_path->getClientOriginalExtension();
-        $imagePath = $randomPath.'.'.$request->thumbnail->getClientOriginalExtension();
+        $videoPath = $randomPath . '.' . $request->video_path->getClientOriginalExtension();
+        $imagePath = $randomPath . '.' . $request->thumbnail->getClientOriginalExtension();
 
+        storage_path('app/public/' . $videoPath);
         $request->video_path->storeAs('/', $videoPath, 'public');
         $request->thumbnail->storeAs('/thumnail', $imagePath, 'public');
- 
+
         $video = Video::create([
             'video_path'  => $videoPath,
             'thumbnail'  => $imagePath,
@@ -76,31 +75,21 @@ class VideoController extends Controller
         ConvertVideo::dispatch($video);
 
         return redirect()->back()->with('success', 'تم رفع الفيديو بنجاح وسيتم معالجته قريباً.');
-
     }
 
 
 
-
-    // public function status(Video $video)
-    // {
-    //     return response()->json(['is_processed' => $video->is_processed]);
-    // }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(Video $video)
     {
-    $sessionKey = 'viewed_video_' . $video->id;
+        $sessionKey = 'viewed_video_' . $video->id;
 
-    if (!session()->has($sessionKey)) {
-        $video->increment('views'); // تزود المشاهدة مرة وحدة
-        session()->put($sessionKey, true); // تحفظ أنه شاف الفيديو في الجلسة
-    }
+        if (!session()->has($sessionKey)) {
+            $video->increment('views');
+            session()->put($sessionKey, true);
+        }
+
         return view('videos.show', compact('video'));
     }
-
     /**
      * Show the form for editing the specified resource.
      */
@@ -111,84 +100,66 @@ class VideoController extends Controller
         return view('videos.edit', compact('video', 'categories'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    // public function update(Request $request, Video $video)
-    // {
-    //     $request->validate([
-    //         'title' => 'required|string|max:255',
-    //         'description' => 'nullable|string',
-    //         'category_id' => 'nullable|exists:categories,id',
-    //         'video_path' => 'nullable|file|mimes:mp4,avi,mov,mkv',
-    //         'thumbnail' => 'nullable|image',
-    //     ]);
 
-    //     // تحديث بيانات الفيديو (بدون تغيير الفيديو الفعلي)
-    //     $video->title = $request->title;
-    //     $video->description = $request->description;
-    //     $video->category_id = $request->category_id;
+    public function update(Request $request, Video $video)
+    {
+        $request->validate([
+            'title' => 'required|string',
+            'description' => 'nullable|string',
+            'thumbnail' => 'nullable|image',
+            'video_path' => 'nullable|file|mimetypes:video/mp4,video/avi,video/mpeg,video/quicktime',
+            'category_id' => 'nullable|exists:categories,id',
+        ]);
 
-    //     if ($request->hasFile('video_path')) {
-    //         // حذف الفيديو القديم (الأصلي وجميع الجودات)
-    //         if ($video->video_path) {
-    //             Storage::disk('s3')->delete($video->video_path);
-    //         }
+        $data = [
+            'title' => $request->title,
+            'description' => $request->description,
+            'category_id' => $request->category_id,
+        ];
 
-    //         if ($video->video_paths) {
-    //             $oldPaths = json_decode($video->video_paths, true);
-    //             if (is_array($oldPaths)) {
-    //                 foreach ($oldPaths as $oldPath) {
-    //                     Storage::disk('s3')->delete($oldPath);
-    //                 }
-    //             }
-    //         }
+        $randomPath = Str::random(16);
 
-    //         // رفع الفيديو الجديد
-    //         $videoFile = $request->file('video_path');
-    //         $videoName = uniqid() . '.' . $videoFile->getClientOriginalExtension();
-    //         $videoPath = $videoFile->storeAs('videos/original', $videoName, 's3');
+        // ✅ تحديث الصورة إن وُجدت
+        if ($request->hasFile('thumbnail')) {
+            // حذف الصورة القديمة
+            if ($video->thumbnail && Storage::disk('public')->exists('thumnail/' . $video->thumbnail)) {
+                Storage::disk('public')->delete('thumnail/' . $video->thumbnail);
+            }
 
-    //         // تحديث مسار الفيديو في الداتا بيس وحالة المعالجة
-    //         $video->video_path = $videoPath;
-    //         $video->video_paths = null;
-    //         $video->is_processed = false;
+            $imagePath = $randomPath . '.' . $request->thumbnail->getClientOriginalExtension();
+            $request->thumbnail->storeAs('thumnail', $imagePath, 'public');
+            $data['thumbnail'] = $imagePath;
+        }
 
-    //         // حفظ التحديثات الأولية
-    //         $video->save();
+        // ✅ تحديث قاعدة البيانات
+        $video->update($data);
 
-    //         // إطلاق الجوب لإعادة معالجة الفيديو
-    //         ProcessVideoJob::dispatch($video->id, $videoName);
+        return redirect()->back()->with('success', 'تم تعديل الفيديو بنجاح.');
+    }
 
-    //         // إعادة التوجيه لصفحة معالجة الفيديو
-    //         return redirect()->route('videos.processing', $video->id)
-    //             ->with('success', 'تم تحديث الفيديو وبدأت معالجته.');
-    //     } else {
-    //         // حفظ التحديثات فقط إذا لم يتم رفع فيديو جديد
-    //         $video->save();
 
-    //         return redirect()->route('videos.show', $video->id)
-    //             ->with('success', 'تم تحديث بيانات الفيديو بنجاح.');
-    //     }
-    // }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Video $video)
     {
         $this->authorize('delete', $video);
-                // حذف الفيديو من التخزين إذا كان موجود
-        if ($video->video_path && Storage::disk('s3')->exists($video->video_path)) {
-            Storage::disk('s3')->delete($video->video_path);
-        }
+
+        // استخراج اسم الفيديو بدون المسار والصيغة
+        $videoFilename = pathinfo($video->video_path, PATHINFO_FILENAME); // يعطيك PBdhmJ3RK3G0juPN
+
+        // حذف جميع الملفات التي تحتوي على هذا الاسم (دقات MP4 و WEBM)
+        $allFiles = Storage::disk('s3')->allFiles(); // جلب كل الملفات في البوكت
+
+        $relatedFiles = collect($allFiles)->filter(function ($file) use ($videoFilename) {
+            return str_contains($file, $videoFilename);
+        });
+
+        Storage::disk('s3')->delete($relatedFiles->all());
 
         // حذف الفيديو من قاعدة البيانات
         $video->delete();
 
-        // إعادة التوجيه مع رسالة نجاح
-        return redirect()->route('home.index')->with('success', 'تم حذف الفيديو بنجاح.');
+        return redirect()->route('home.index')->with('success', 'تم حذف الفيديو وجميع نسخه بنجاح.');
     }
+
 
 
 
@@ -197,13 +168,13 @@ class VideoController extends Controller
         $query = $request->input('query');
         $videos = Video::where('title', 'like', "%{$query}%")
             ->orWhere('description', 'like', "%{$query}%")
-            ->orWhereHas('channel', function($q) use ($query) {
+            ->orWhereHas('channel', function ($q) use ($query) {
                 $q->where('name', 'like', "%{$query}%");
             })
-            ->orWhereHas('category', function($q) use ($query) {
+            ->orWhereHas('category', function ($q) use ($query) {
                 $q->where('name', 'like', "%{$query}%");
             })
             ->paginate(9);
-            return view('home', compact('videos'));
+        return view('home', compact('videos'));
     }
 }
